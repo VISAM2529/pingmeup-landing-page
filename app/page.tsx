@@ -152,7 +152,8 @@ function Navbar() {
           </div>
 
           <div className="hidden lg:flex items-center gap-3">
-            <motion.button
+            <motion.a
+              href="https://app.pingmeup.in/login"
               className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -161,8 +162,9 @@ function Navbar() {
               whileTap={{ scale: 0.95 }}
             >
               Sign In
-            </motion.button>
-            <motion.button
+            </motion.a>
+            <motion.a
+              href="https://app.pingmeup.in/signup"
               className="btn-shimmer px-5 py-2.5 text-sm font-medium text-white bg-gray-900 rounded-full hover:bg-gray-800 transition-all"
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -171,7 +173,7 @@ function Navbar() {
               whileTap={{ scale: 0.95 }}
             >
               Get Started Free
-            </motion.button>
+            </motion.a>
           </div>
 
           <button className="lg:hidden p-2" onClick={() => setIsOpen(!isOpen)}>
@@ -202,14 +204,15 @@ function Navbar() {
                   {item}
                 </motion.a>
               ))}
-              <motion.button
-                className="w-full mt-4 px-5 py-3 text-sm font-medium text-white bg-gray-900 rounded-xl"
+              <motion.a
+                href="https://app.pingmeup.in/signup"
+                className="w-full mt-4 px-5 py-3 text-sm font-medium text-white bg-gray-900 rounded-xl block text-center"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
               >
                 Get Started Free
-              </motion.button>
+              </motion.a>
             </div>
           </motion.div>
         )}
@@ -330,7 +333,8 @@ function Hero() {
             animate="visible"
             className="flex flex-col sm:flex-row items-center justify-center gap-4"
           >
-            <motion.button
+            <motion.a
+              href="https://app.pingmeup.in/signup"
               variants={fadeInUp}
               custom={3}
               className="group btn-shimmer px-8 py-4 bg-gray-900 text-white rounded-full font-semibold flex items-center gap-3 shadow-2xl shadow-gray-900/20"
@@ -344,7 +348,7 @@ function Hero() {
               >
                 <ArrowRight className="w-4 h-4" />
               </motion.span>
-            </motion.button>
+            </motion.a>
             <motion.button
               variants={fadeInUp}
               custom={4}
@@ -1146,7 +1150,8 @@ function FinalCTA() {
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ delay: 0.4 }}
             >
-              <motion.button
+              <motion.a
+                href="https://app.pingmeup.in/signup"
                 className="btn-shimmer px-8 py-4 bg-white text-gray-900 rounded-full font-semibold flex items-center gap-3"
                 whileHover={{ scale: 1.05, boxShadow: '0 20px 40px -10px rgba(255,255,255,0.3)' }}
                 whileTap={{ scale: 0.98 }}
@@ -1158,13 +1163,14 @@ function FinalCTA() {
                 >
                   <ArrowRight className="w-4 h-4" />
                 </motion.span>
-              </motion.button>
-              <motion.button
+              </motion.a>
+              <motion.a
+                href="mailto:support@pingmeup.in"
                 className="px-8 py-4 text-gray-400 font-medium hover:text-white transition-colors"
                 whileHover={{ scale: 1.05 }}
               >
                 Talk to Sales
-              </motion.button>
+              </motion.a>
             </motion.div>
             <motion.p
               className="text-gray-500 text-sm mt-8"
