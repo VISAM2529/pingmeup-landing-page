@@ -366,10 +366,10 @@ function Navbar({ onOpenModal }: { onOpenModal: () => void }) {
           </motion.div>
 
           <div className="hidden lg:flex items-center gap-1">
-            {['Features', 'How It Works', 'Pricing', 'About'].map((item, index) => (
+            {['Features', 'How It Works', 'Testimonials'].map((item, index) => (
               <motion.a
                 key={item}
-                href={`#${item.toLowerCase().replace(' ', '-')}`}
+                href={`#${item.toLowerCase().replace(/\s+/g, '-')}`}
                 className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900 rounded-lg hover:bg-gray-100/80 transition-all relative"
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -382,7 +382,7 @@ function Navbar({ onOpenModal }: { onOpenModal: () => void }) {
           </div>
 
           <div className="hidden lg:flex items-center gap-3">
-            <motion.a
+            {/* <motion.a
               href="https://app.pingmeup.in/login"
               className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors"
               initial={{ opacity: 0 }}
@@ -392,7 +392,7 @@ function Navbar({ onOpenModal }: { onOpenModal: () => void }) {
               whileTap={{ scale: 0.95 }}
             >
               Sign In
-            </motion.a>
+            </motion.a> */}
             <motion.button
               onClick={onOpenModal}
               className="btn-shimmer px-5 py-2.5 text-sm font-medium text-white bg-gray-900 rounded-full hover:bg-gray-800 transition-all"
@@ -422,10 +422,11 @@ function Navbar({ onOpenModal }: { onOpenModal: () => void }) {
             className="lg:hidden bg-white border-t overflow-hidden"
           >
             <div className="py-4 px-6">
-              {['Features', 'How It Works', 'Pricing', 'About'].map((item, index) => (
+              {['Features', 'How It Works', 'Testimonials'].map((item, index) => (
                 <motion.a
                   key={item}
-                  href="#"
+                  href={`#${item.toLowerCase().replace(/\s+/g, '-')}`}
+                  onClick={() => setIsOpen(false)}
                   className="block py-3 text-gray-600"
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
@@ -499,17 +500,17 @@ function Hero({ onOpenModal }: { onOpenModal: () => void }) {
             initial="hidden"
             animate="visible"
             custom={0}
-            whileHover={{ scale: 1.05, boxShadow: '0 10px 40px -10px rgba(0,0,0,0.1)' }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white shadow-premium border border-gray-100 mb-8 cursor-pointer"
+            // whileHover={{ scale: 1.05, boxShadow: '0 10px 40px -10px rgba(0,0,0,0.1)' }}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white shadow-premium border border-gray-100 mb-8 "
           >
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
             </span>
             <span className="text-sm text-gray-600">Now with WhatsApp Business API</span>
-            <motion.span animate={{ x: [0, 4, 0] }} transition={{ duration: 1.5, repeat: Infinity }}>
+            {/* <motion.span animate={{ x: [0, 4, 0] }} transition={{ duration: 1.5, repeat: Infinity }}>
               <ArrowUpRight className="w-3.5 h-3.5 text-gray-400" />
-            </motion.span>
+            </motion.span> */}
           </motion.div>
 
           {/* Headline */}
@@ -579,7 +580,7 @@ function Hero({ onOpenModal }: { onOpenModal: () => void }) {
                 <ArrowRight className="w-4 h-4" />
               </motion.span>
             </motion.button>
-            <motion.button
+            {/* <motion.button
               variants={fadeInUp}
               custom={4}
               className="flex items-center gap-3 px-6 py-4 text-gray-700 font-medium hover:text-gray-900 transition-colors group"
@@ -594,7 +595,7 @@ function Hero({ onOpenModal }: { onOpenModal: () => void }) {
                 <PlayCircle className="w-5 h-5 text-indigo-600" />
               </motion.div>
               Watch 2-min demo
-            </motion.button>
+            </motion.button> */}
           </motion.div>
 
           {/* Social Proof */}
@@ -1059,7 +1060,7 @@ function Testimonials() {
   ];
 
   return (
-    <section ref={ref} className="py-24 lg:py-32 bg-white overflow-hidden">
+    <section id="testimonials" ref={ref} className="py-24 lg:py-32 bg-white overflow-hidden">
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 40 }}
@@ -1439,9 +1440,10 @@ function Footer() {
           </div>
 
           {[
-            { title: 'Product', links: ['Features', 'Pricing', 'Integrations', 'API'] },
-            { title: 'Company', links: ['About', 'Blog', 'Careers', 'Press'] },
-            { title: 'Legal', links: ['Privacy', 'Terms', 'Security'] },
+            { title: 'Product', links: ['Features', 'Integrations', 'API'] },
+            { title: 'Company', links: ['Blog', 'Careers', 'Press'] },
+            // Commented out Legal section per request
+            // { title: 'Legal', links: ['Privacy', 'Terms', 'Security'] },
           ].map((group, i) => (
             <div key={i}>
               <h4 className="font-semibold text-gray-900 mb-4">{group.title}</h4>
