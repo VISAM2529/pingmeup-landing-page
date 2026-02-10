@@ -554,7 +554,7 @@ function Hero({ onOpenModal }: { onOpenModal: () => void }) {
             custom={2}
             className="text-lg lg:text-xl text-gray-600 max-w-2xl mx-auto mb-10 leading-relaxed"
           >
-            PingMeUp sends automated WhatsApp messages for birthdays, passport expiries, and visa renewals. Your customers feel valued, you save hours.
+            PingMeUp sends automated WhatsApp messages for appointment reminders, passport expiries, birthdays, and visa renewals. Your customers feel valued, you save hours.
           </motion.p>
 
           {/* CTAs */}
@@ -805,10 +805,10 @@ function Features() {
 
   const features = [
     {
-      title: 'Automated Birthday Wishes',
-      description: 'Send personalized birthday messages to every customer automatically. Make them feel special without lifting a finger.',
-      icon: Gift,
-      color: 'from-pink-500 to-rose-500',
+      title: 'Customer Lifecycle Automation',
+      description: 'Automate timely, personalized messages across the entire customer journey — from bookings and reminders to birthdays, feedback, and beyond.',
+      icon: Plane,
+      color: 'from-indigo-500 to-violet-500',
       size: 'large',
     },
     {
@@ -893,36 +893,99 @@ function Features() {
             <h3 className="text-2xl lg:text-3xl font-bold mb-4">{features[0].title}</h3>
             <p className="text-gray-600 text-lg leading-relaxed mb-8">{features[0].description}</p>
 
-            {/* Mini preview */}
+            {/* Mini previews for travel agencies */}
             <motion.div
-              className="bg-white rounded-2xl p-6 shadow-premium border border-gray-100"
+              className="grid grid-cols-1 sm:grid-cols-2 gap-4"
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ delay: 0.4 }}
-              whileHover={{ scale: 1.02 }}
             >
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-pink-400 to-rose-500 flex items-center justify-center text-white font-bold">
-                  JS
-                </div>
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-2">
-                    <p className="font-semibold">Birthday Message</p>
-                    <motion.span
-                      className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full"
-                      initial={{ scale: 0 }}
-                      animate={isInView ? { scale: 1 } : {}}
-                      transition={{ delay: 0.6, type: 'spring' }}
-                    >
-                      Sent
-                    </motion.span>
+              {/* Promotions & Fare Alerts */}
+              {/* <motion.div
+                className="bg-white rounded-2xl p-4 shadow-premium border border-gray-100"
+                whileHover={{ scale: 1.02 }}
+              >
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-rose-400 to-pink-500 flex items-center justify-center text-white font-bold">
+                    FA
                   </div>
-                  <p className="text-gray-600 text-sm leading-relaxed">
-                    "Happy Birthday, John! 🎂 Wishing you a wonderful year ahead. Thank you for being a valued customer of TravelPro Agency!"
-                  </p>
-                  <p className="text-xs text-gray-400 mt-2">Delivered • Today at 9:00 AM</p>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      <p className="font-semibold">Promotions & Fare Alerts</p>
+                      <motion.span
+                        className="text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full"
+                        initial={{ scale: 0 }}
+                        animate={isInView ? { scale: 1 } : {}}
+                        transition={{ delay: 0.55, type: 'spring' }}
+                      >
+                        Live
+                      </motion.span>
+                    </div>
+                    <p className="text-gray-600 text-sm leading-relaxed">
+                      Hi {`{name}`}, fares to {`{destination}`} dropped—save 20% with code <strong>TRAVEL20</strong>. Book now.
+                    </p>
+                    <p className="text-xs text-gray-400 mt-2">Delivered • Today at 11:12 AM</p>
+                  </div>
                 </div>
-              </div>
+              </motion.div> */}
+
+              {/* Trip Lifecycle Messaging */}
+              <motion.div
+                className="bg-white rounded-2xl p-4 shadow-premium border border-gray-100"
+                whileHover={{ scale: 1.02 }}
+              >
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-violet-500 flex items-center justify-center text-white font-bold">
+                    TL
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      <p className="font-semibold">Trip Lifecycle</p>
+                      <motion.span
+                        className="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full"
+                        initial={{ scale: 0 }}
+                        animate={isInView ? { scale: 1 } : {}}
+                        transition={{ delay: 0.6, type: 'spring' }}
+                      >
+                        Upcoming
+                      </motion.span>
+                    </div>
+                    <p className="text-gray-600 text-sm leading-relaxed">
+                      Hi John, your trip to {`{destination}`} departs in 3 days—here's your e‑ticket and packing checklist.
+                    </p>
+                    <p className="text-xs text-gray-400 mt-2">Scheduled • In 3 days</p>
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Birthday Message (restored) */}
+              <motion.div
+                className="bg-white rounded-2xl p-4 shadow-premium border border-gray-100"
+                whileHover={{ scale: 1.02 }}
+              >
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-pink-400 to-rose-500 flex items-center justify-center text-white font-bold">
+                    JS
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      <p className="font-semibold">Birthday Message</p>
+                      <motion.span
+                        className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full"
+                        initial={{ scale: 0 }}
+                        animate={isInView ? { scale: 1 } : {}}
+                        transition={{ delay: 0.6, type: 'spring' }}
+                      >
+                        Sent
+                      </motion.span>
+                    </div>
+                    <p className="text-gray-600 text-sm leading-relaxed">
+                      Happy Birthday, John! 🎂 Wishing you a wonderful year ahead. Thank you for being a valued customer of TravelPro Agency!
+                    </p>
+                    <p className="text-xs text-gray-400 mt-2">Delivered • Today at 9:00 AM</p>
+                  </div>
+                </div>
+              </motion.div>
             </motion.div>
           </motion.div>
 
