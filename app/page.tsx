@@ -402,7 +402,8 @@ function Navbar({ onOpenModal }: { onOpenModal: () => void }) {
               whileHover={{ scale: 1.05, boxShadow: '0 10px 30px -10px rgba(0,0,0,0.3)' }}
               whileTap={{ scale: 0.95 }}
             >
-              Get Started Free
+              {/* Get Started Free */}
+              Get Early Access
             </motion.button>
           </div>
 
@@ -572,7 +573,8 @@ function Hero({ onOpenModal }: { onOpenModal: () => void }) {
               whileHover={{ scale: 1.05, boxShadow: '0 25px 50px -12px rgba(0,0,0,0.35)' }}
               whileTap={{ scale: 0.98 }}
             >
-              Start Free — No Card Needed
+              Get Early Access
+              {/* Start Free — No Card Needed */}
               <motion.span
                 animate={{ x: [0, 5, 0] }}
                 transition={{ duration: 1.5, repeat: Infinity }}
@@ -1448,7 +1450,8 @@ function FinalCTA({ onOpenModal }: { onOpenModal: () => void }) {
                 whileHover={{ scale: 1.05, boxShadow: '0 20px 40px -10px rgba(255,255,255,0.3)' }}
                 whileTap={{ scale: 0.98 }}
               >
-                Start Free Trial
+                {/* Start Free Trial */}
+                Get Early Access
                 <motion.span
                   animate={{ x: [0, 5, 0] }}
                   transition={{ duration: 1.5, repeat: Infinity }}
