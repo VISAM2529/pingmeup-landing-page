@@ -1459,7 +1459,7 @@ function FinalCTA({ onOpenModal }: { onOpenModal: () => void }) {
                 </motion.span>
               </motion.button>
               <motion.a
-                href="mailto:support@pingmeup.in"
+                href="mailto:info@pingmeup.in"
                 className="px-8 py-4 text-gray-400 font-medium hover:text-white transition-colors"
                 whileHover={{ scale: 1.05 }}
               >
