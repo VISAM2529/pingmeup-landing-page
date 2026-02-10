@@ -224,7 +224,7 @@ function SubscribeModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
               >
                 {status === 'success'
                   ? 'Check your inbox for a welcome surprise'
-                  : 'Be the first to know when we launch new features'
+                  : 'Launching soon • Early users get priority access'
                 }
               </motion.p>
             </div>
