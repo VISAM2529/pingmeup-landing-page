@@ -153,7 +153,7 @@ function Navbar() {
 
           <div className="hidden lg:flex items-center gap-3">
             <motion.a
-              href="https://app.pingmeup.in/login"
+              href="/"
               className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -164,7 +164,7 @@ function Navbar() {
               Sign In
             </motion.a>
             <motion.a
-              href="https://app.pingmeup.in/signup"
+              href="/"
               className="btn-shimmer px-5 py-2.5 text-sm font-medium text-white bg-gray-900 rounded-full hover:bg-gray-800 transition-all"
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -205,7 +205,7 @@ function Navbar() {
                 </motion.a>
               ))}
               <motion.a
-                href="https://app.pingmeup.in/signup"
+                href="/"
                 className="w-full mt-4 px-5 py-3 text-sm font-medium text-white bg-gray-900 rounded-xl block text-center"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -334,7 +334,7 @@ function Hero() {
             className="flex flex-col sm:flex-row items-center justify-center gap-4"
           >
             <motion.a
-              href="https://app.pingmeup.in/signup"
+              href="/"
               variants={fadeInUp}
               custom={3}
               className="group btn-shimmer px-8 py-4 bg-gray-900 text-white rounded-full font-semibold flex items-center gap-3 shadow-2xl shadow-gray-900/20"
@@ -1151,7 +1151,7 @@ function FinalCTA() {
               transition={{ delay: 0.4 }}
             >
               <motion.a
-                href="https://app.pingmeup.in/signup"
+                href="/"
                 className="btn-shimmer px-8 py-4 bg-white text-gray-900 rounded-full font-semibold flex items-center gap-3"
                 whileHover={{ scale: 1.05, boxShadow: '0 20px 40px -10px rgba(255,255,255,0.3)' }}
                 whileTap={{ scale: 0.98 }}
