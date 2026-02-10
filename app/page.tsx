@@ -310,8 +310,7 @@ function SubscribeModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
                       ) : (
                         <>
                           <Sparkles className="w-4 h-4" />
-                          Subscribe & Get Started
-                        </>
+                          Request Early Access                        </>
                       )}
                     </motion.button>
 
