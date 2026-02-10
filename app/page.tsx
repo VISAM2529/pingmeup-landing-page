@@ -1420,6 +1420,14 @@ function FinalCTA({ onOpenModal }: { onOpenModal: () => void }) {
 
 // Footer
 function Footer() {
+  const linkMap: Record<string, string> = {
+    Features: '/#features',
+    Integrations: '/integrations',
+    API: '/docs/api',
+    Blog: '/blog',
+    Careers: '/careers',
+    Press: '/press',
+  };
   return (
     <footer className="bg-gray-50 border-t border-gray-100 py-16">
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
@@ -1441,9 +1449,7 @@ function Footer() {
 
           {[
             { title: 'Product', links: ['Features', 'Integrations', 'API'] },
-            { title: 'Company', links: ['Blog', 'Careers', 'Press'] },
-            // Commented out Legal section per request
-            // { title: 'Legal', links: ['Privacy', 'Terms', 'Security'] },
+            // { title: 'Company', links: ['Blog', 'Careers', 'Press'] }, // commented out per request
           ].map((group, i) => (
             <div key={i}>
               <h4 className="font-semibold text-gray-900 mb-4">{group.title}</h4>
@@ -1451,7 +1457,7 @@ function Footer() {
                 {group.links.map((link, j) => (
                   <li key={j}>
                     <motion.a
-                      href="#"
+                      href={linkMap[link] ?? '#'}
                       className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
                       whileHover={{ x: 3 }}
                     >

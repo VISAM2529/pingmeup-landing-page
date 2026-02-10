@@ -1,44 +1,76 @@
-import { NextRequest, NextResponse } from 'next/server';
-import nodemailer from 'nodemailer';
+import { NextRequest, NextResponse } from "next/server";
+import nodemailer from "nodemailer";
+import clientPromise from "../../../lib/mongodb";
 
 export async function POST(request: NextRequest) {
+  try {
+    const { email } = await request.json();
+
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return NextResponse.json(
+        { error: "Please provide a valid email address" },
+        { status: 400 },
+      );
+    }
+
+    const smtpUser = (process.env.SMTP_USER || "info@pingmeup.in").trim();
+    const smtpPass = (process.env.SMTP_PASS || "").trim();
+    const smtpHost = (process.env.SMTP_HOST || "smtp.hostinger.com").trim();
+    const smtpPort = Number(process.env.SMTP_PORT) || 587;
+
+    console.log("SMTP Config:", {
+      host: smtpHost,
+      port: smtpPort,
+      user: smtpUser,
+      passLength: smtpPass.length,
+    });
+
     try {
-        const { email } = await request.json();
+      const client = await clientPromise;
+      const db = client.db(process.env.MONGODB_DB || "pingmeup");
+      const waitlist = db.collection("waitlist");
 
-        if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-            return NextResponse.json(
-                { error: 'Please provide a valid email address' },
-                { status: 400 }
-            );
-        }
+      await waitlist.updateOne(
+        { email: email.toLowerCase().trim() },
+        {
+          $setOnInsert: {
+            email: email.toLowerCase().trim(),
+            createdAt: new Date(),
+            source: "landing_page",
+          },
+        },
+        { upsert: true },
+      );
 
-        const smtpUser = (process.env.SMTP_USER || 'info@pingmeup.in').trim();
-        const smtpPass = (process.env.SMTP_PASS || '').trim();
-        const smtpHost = (process.env.SMTP_HOST || 'smtp.hostinger.com').trim();
-        const smtpPort = Number(process.env.SMTP_PORT) || 587;
+      console.log("Stored subscriber in MongoDB:", email);
+    } catch (dbError) {
+      console.error("Failed to store subscriber in MongoDB:", dbError);
+      return NextResponse.json(
+        { error: "Failed to store subscriber. Please try again." },
+        { status: 500 },
+      );
+    }
 
-        console.log('SMTP Config:', { host: smtpHost, port: smtpPort, user: smtpUser, passLength: smtpPass.length });
+    // Create transporter using business email
+    const transporter = nodemailer.createTransport({
+      host: smtpHost,
+      port: smtpPort,
+      secure: smtpPort === 465,
+      auth: {
+        user: smtpUser,
+        pass: smtpPass,
+      },
+      ...(smtpPort === 587 && {
+        tls: { rejectUnauthorized: false },
+      }),
+    });
 
-        // Create transporter using business email
-        const transporter = nodemailer.createTransport({
-            host: smtpHost,
-            port: smtpPort,
-            secure: smtpPort === 465,
-            auth: {
-                user: smtpUser,
-                pass: smtpPass,
-            },
-            ...(smtpPort === 587 && {
-                tls: { rejectUnauthorized: false },
-            }),
-        });
-
-        // Send acknowledgment email to the subscriber
-        await transporter.sendMail({
-            from: '"PingMeUp" <info@pingmeup.in>',
-            to: email,
-            subject: '🎉 Welcome to PingMeUp — You\'re In!',
-            html: `
+    // Send acknowledgment email to the subscriber
+    await transporter.sendMail({
+      from: '"PingMeUp" <info@pingmeup.in>',
+      to: email,
+      subject: "🎉 Welcome to PingMeUp — You're In!",
+      html: `
 <!DOCTYPE html>
 <html>
 <head>
@@ -72,12 +104,6 @@ export async function POST(request: NextRequest) {
                             <!-- Features -->
                             <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 24px;">
                                 <tr>
-                                    <td style="padding: 12px 16px; background: #EEF2FF; border-radius: 12px; margin-bottom: 8px;">
-                                        <p style="margin: 0; color: #4338CA; font-size: 14px;">✅ Automated birthday & anniversary reminders</p>
-                                    </td>
-                                </tr>
-                                <tr><td style="height: 8px;"></td></tr>
-                                <tr>
                                     <td style="padding: 12px 16px; background: #EEF2FF; border-radius: 12px;">
                                         <p style="margin: 0; color: #4338CA; font-size: 14px;">✅ Passport & visa expiry tracking</p>
                                     </td>
@@ -92,6 +118,12 @@ export async function POST(request: NextRequest) {
                                 <tr>
                                     <td style="padding: 12px 16px; background: #EEF2FF; border-radius: 12px;">
                                         <p style="margin: 0; color: #4338CA; font-size: 14px;">✅ Web + Mobile app access</p>
+                                    </td>
+                                </tr>
+                                <tr><td style="height: 8px;"></td></tr>
+                                <tr>
+                                    <td style="padding: 12px 16px; background: #EEF2FF; border-radius: 12px; margin-bottom: 8px;">
+                                        <p style="margin: 0; color: #4338CA; font-size: 14px;">✅ Automated birthday & anniversary reminders</p>
                                     </td>
                                 </tr>
                             </table>
@@ -119,29 +151,32 @@ export async function POST(request: NextRequest) {
 </body>
 </html>
             `,
-        });
+    });
 
-        // Send notification to business email
-        await transporter.sendMail({
-            from: '"PingMeUp Website" <info@pingmeup.in>',
-            to: 'info@pingmeup.in',
-            subject: `📬 New Subscriber: ${email}`,
-            html: `
+    // Send notification to business email
+    await transporter.sendMail({
+      from: '"PingMeUp Website" <info@pingmeup.in>',
+      to: "info@pingmeup.in",
+      subject: `📬 New Subscriber: ${email}`,
+      html: `
                 <div style="font-family: sans-serif; padding: 20px;">
                     <h2 style="color: #4F46E5;">New Subscription!</h2>
                     <p><strong>Email:</strong> ${email}</p>
-                    <p><strong>Time:</strong> ${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}</p>
+                    <p><strong>Time:</strong> ${new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })}</p>
                     <p><strong>Source:</strong> Landing Page</p>
                 </div>
             `,
-        });
+    });
 
-        return NextResponse.json({ success: true, message: 'Subscription successful!' });
-    } catch (error: any) {
-        console.error('Subscription error:', error);
-        return NextResponse.json(
-            { error: 'Failed to process subscription. Please try again.' },
-            { status: 500 }
-        );
-    }
+    return NextResponse.json({
+      success: true,
+      message: "Subscription successful!",
+    });
+  } catch (error: any) {
+    console.error("Subscription error:", error);
+    return NextResponse.json(
+      { error: "Failed to process subscription. Please try again." },
+      { status: 500 },
+    );
+  }
 }
