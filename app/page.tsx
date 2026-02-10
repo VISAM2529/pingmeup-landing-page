@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, useScroll, useTransform, useInView, AnimatePresence } from 'framer-motion';
 import {
   Bell,
@@ -23,6 +23,10 @@ import {
   Clock,
   ChevronRight,
   Quote,
+  Mail,
+  Loader2,
+  CheckCircle2,
+  Rocket,
 } from 'lucide-react';
 
 // Smooth animation variants
@@ -99,8 +103,234 @@ const cardHover = {
   },
 };
 
+// Subscribe Modal
+function SubscribeModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
+  const [email, setEmail] = useState('');
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [errorMsg, setErrorMsg] = useState('');
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (isOpen && inputRef.current) {
+      setTimeout(() => inputRef.current?.focus(), 300);
+    }
+    if (!isOpen) {
+      // Reset state when modal closes
+      setTimeout(() => {
+        setEmail('');
+        setStatus('idle');
+        setErrorMsg('');
+      }, 300);
+    }
+  }, [isOpen]);
+
+  // Lock body scroll when modal is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [isOpen]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setErrorMsg('Please enter a valid email address');
+      return;
+    }
+    setStatus('loading');
+    setErrorMsg('');
+    try {
+      const res = await fetch('/api/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Something went wrong');
+      setStatus('success');
+    } catch (err: any) {
+      setStatus('error');
+      setErrorMsg(err.message || 'Something went wrong. Please try again.');
+    }
+  };
+
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          className="fixed inset-0 z-[100] flex items-center justify-center px-4"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+        >
+          {/* Backdrop */}
+          <motion.div
+            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+            onClick={onClose}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          />
+
+          {/* Modal Card */}
+          <motion.div
+            className="relative w-full max-w-md bg-white rounded-3xl shadow-2xl overflow-hidden"
+            initial={{ opacity: 0, scale: 0.9, y: 30 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.9, y: 30 }}
+            transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Gradient Header */}
+            <div className="relative bg-gradient-to-br from-indigo-600 via-indigo-500 to-violet-600 px-8 pt-10 pb-12 text-center overflow-hidden">
+              {/* Decorative circles */}
+              <div className="absolute top-0 -right-10 w-40 h-40 bg-white/10 rounded-full blur-2xl" />
+              <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-violet-400/20 rounded-full blur-2xl" />
+
+              {/* Close button */}
+              <button
+                onClick={onClose}
+                className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition-colors text-white"
+              >
+                <X className="w-4 h-4" />
+              </button>
+
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ type: 'spring', delay: 0.1 }}
+                className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-sm mb-4"
+              >
+                <Rocket className="w-8 h-8 text-white" />
+              </motion.div>
+
+              <motion.h2
+                className="text-2xl font-bold text-white mb-2"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.15 }}
+              >
+                {status === 'success' ? 'You\'re In! 🎉' : 'Get Early Access'}
+              </motion.h2>
+              <motion.p
+                className="text-white/80 text-sm"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.2 }}
+              >
+                {status === 'success'
+                  ? 'Check your inbox for a welcome surprise'
+                  : 'Be the first to know when we launch new features'
+                }
+              </motion.p>
+            </div>
+
+            {/* Body */}
+            <div className="px-8 py-8">
+              <AnimatePresence mode="wait">
+                {status === 'success' ? (
+                  <motion.div
+                    key="success"
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.8 }}
+                    className="text-center py-4"
+                  >
+                    <motion.div
+                      className="w-16 h-16 mx-auto mb-4 rounded-full bg-green-100 flex items-center justify-center"
+                      initial={{ scale: 0 }}
+                      animate={{ scale: [0, 1.2, 1] }}
+                      transition={{ duration: 0.5, times: [0, 0.6, 1] }}
+                    >
+                      <CheckCircle2 className="w-8 h-8 text-green-600" />
+                    </motion.div>
+                    <p className="text-gray-700 font-medium mb-2">Welcome aboard!</p>
+                    <p className="text-gray-500 text-sm mb-6">
+                      We've sent a welcome email to <strong className="text-indigo-600">{email}</strong>
+                    </p>
+                    <motion.button
+                      onClick={onClose}
+                      className="px-6 py-3 bg-gray-900 text-white rounded-full text-sm font-medium hover:bg-gray-800 transition-colors"
+                      whileHover={{ scale: 1.03 }}
+                      whileTap={{ scale: 0.97 }}
+                    >
+                      Got it, thanks!
+                    </motion.button>
+                  </motion.div>
+                ) : (
+                  <motion.form
+                    key="form"
+                    onSubmit={handleSubmit}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                  >
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Email address
+                    </label>
+                    <div className="relative mb-3">
+                      <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                      <input
+                        ref={inputRef}
+                        type="email"
+                        value={email}
+                        onChange={(e) => { setEmail(e.target.value); setErrorMsg(''); }}
+                        placeholder="you@example.com"
+                        className="w-full pl-11 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all text-sm"
+                        disabled={status === 'loading'}
+                      />
+                    </div>
+
+                    {errorMsg && (
+                      <motion.p
+                        initial={{ opacity: 0, y: -5 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="text-red-500 text-xs mb-3"
+                      >
+                        {errorMsg}
+                      </motion.p>
+                    )}
+
+                    <motion.button
+                      type="submit"
+                      disabled={status === 'loading'}
+                      className="w-full py-3.5 bg-gradient-to-r from-indigo-600 to-violet-600 text-white rounded-xl font-semibold text-sm flex items-center justify-center gap-2 hover:from-indigo-700 hover:to-violet-700 transition-all disabled:opacity-70 shadow-lg shadow-indigo-600/20"
+                      whileHover={{ scale: 1.01 }}
+                      whileTap={{ scale: 0.99 }}
+                    >
+                      {status === 'loading' ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                          Subscribing...
+                        </>
+                      ) : (
+                        <>
+                          <Sparkles className="w-4 h-4" />
+                          Subscribe & Get Started
+                        </>
+                      )}
+                    </motion.button>
+
+                    <p className="text-center text-xs text-gray-400 mt-4">
+                      No spam, ever. We respect your inbox.
+                    </p>
+                  </motion.form>
+                )}
+              </AnimatePresence>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
+
 // Navbar
-function Navbar() {
+function Navbar({ onOpenModal }: { onOpenModal: () => void }) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
@@ -153,7 +383,7 @@ function Navbar() {
 
           <div className="hidden lg:flex items-center gap-3">
             <motion.a
-              href="/"
+              href="https://app.pingmeup.in/login"
               className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -163,8 +393,8 @@ function Navbar() {
             >
               Sign In
             </motion.a>
-            <motion.a
-              href="/"
+            <motion.button
+              onClick={onOpenModal}
               className="btn-shimmer px-5 py-2.5 text-sm font-medium text-white bg-gray-900 rounded-full hover:bg-gray-800 transition-all"
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -173,7 +403,7 @@ function Navbar() {
               whileTap={{ scale: 0.95 }}
             >
               Get Started Free
-            </motion.a>
+            </motion.button>
           </div>
 
           <button className="lg:hidden p-2" onClick={() => setIsOpen(!isOpen)}>
@@ -204,15 +434,15 @@ function Navbar() {
                   {item}
                 </motion.a>
               ))}
-              <motion.a
-                href="/"
+              <motion.button
+                onClick={onOpenModal}
                 className="w-full mt-4 px-5 py-3 text-sm font-medium text-white bg-gray-900 rounded-xl block text-center"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
               >
                 Get Started Free
-              </motion.a>
+              </motion.button>
             </div>
           </motion.div>
         )}
@@ -222,7 +452,7 @@ function Navbar() {
 }
 
 // Hero Section
-function Hero() {
+function Hero({ onOpenModal }: { onOpenModal: () => void }) {
   const containerRef = useRef(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -333,8 +563,8 @@ function Hero() {
             animate="visible"
             className="flex flex-col sm:flex-row items-center justify-center gap-4"
           >
-            <motion.a
-              href="/"
+            <motion.button
+              onClick={onOpenModal}
               variants={fadeInUp}
               custom={3}
               className="group btn-shimmer px-8 py-4 bg-gray-900 text-white rounded-full font-semibold flex items-center gap-3 shadow-2xl shadow-gray-900/20"
@@ -348,7 +578,7 @@ function Hero() {
               >
                 <ArrowRight className="w-4 h-4" />
               </motion.span>
-            </motion.a>
+            </motion.button>
             <motion.button
               variants={fadeInUp}
               custom={4}
@@ -1096,7 +1326,7 @@ function DownloadApp() {
 }
 
 // Final CTA
-function FinalCTA() {
+function FinalCTA({ onOpenModal }: { onOpenModal: () => void }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
@@ -1150,8 +1380,8 @@ function FinalCTA() {
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ delay: 0.4 }}
             >
-              <motion.a
-                href="/"
+              <motion.button
+                onClick={onOpenModal}
                 className="btn-shimmer px-8 py-4 bg-white text-gray-900 rounded-full font-semibold flex items-center gap-3"
                 whileHover={{ scale: 1.05, boxShadow: '0 20px 40px -10px rgba(255,255,255,0.3)' }}
                 whileTap={{ scale: 0.98 }}
@@ -1163,7 +1393,7 @@ function FinalCTA() {
                 >
                   <ArrowRight className="w-4 h-4" />
                 </motion.span>
-              </motion.a>
+              </motion.button>
               <motion.a
                 href="mailto:support@pingmeup.in"
                 className="px-8 py-4 text-gray-400 font-medium hover:text-white transition-colors"
@@ -1258,16 +1488,21 @@ function Footer() {
 
 // Main
 export default function Home() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const openModal = useCallback(() => setIsModalOpen(true), []);
+  const closeModal = useCallback(() => setIsModalOpen(false), []);
+
   return (
     <main className="min-h-screen">
-      <Navbar />
-      <Hero />
+      <Navbar onOpenModal={openModal} />
+      <Hero onOpenModal={openModal} />
       <Features />
       <HowItWorks />
       <Testimonials />
       <DownloadApp />
-      <FinalCTA />
+      <FinalCTA onOpenModal={openModal} />
       <Footer />
+      <SubscribeModal isOpen={isModalOpen} onClose={closeModal} />
     </main>
   );
 }
